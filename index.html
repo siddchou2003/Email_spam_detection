@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Spam Detector</title>
+        <link rel="stylesheet" href="css/style.css">
+        <script>
+            function checkSpam(event) {
+                event.preventDefault();
+
+                const message = document.querySelector('textarea[name="message"]').value;
+
+                fetch('classifier.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: 'message=' + encodeURIComponent(message)
+                })
+                .then(response => response.text())
+                .then(result => {
+                    const resultBox = document.getElementById('result');
+                    resultBox.innerHTML = `<strong>Result:</strong> ${result}`;
+                    resultBox.style.color = (result.trim() === "spam") ? "red" : "green";
+                });
+            }
+        </script>
+    </head>
+    <body>
+        <div class="container">
+            <h2>Spam Detector</h2>
+            <form onsubmit="checkSpam(event)">
+                <label for="message">Enter your message:</label>
+                <textarea name="message" rows="4" required></textarea>
+                <input type="submit" value="Check Spam">
+            </form>
+            <div id="result" style="margin-top: 20px; font-size: 18px;"></div>
+        </div>
+    </body>
+</html>
